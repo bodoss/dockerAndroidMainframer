@@ -1,0 +1,11 @@
+#add this to ~/.ssh/config
+
+Host mainframer
+  User root
+  HostName localhost
+  Port 3333
+  RSAAuthentication yes
+  IdentityFile ~/.ssh/id_rsa_personal
+  ControlMaster auto
+  ControlPath /tmp/%r@%h:%p
+  ControlPersist 1h
