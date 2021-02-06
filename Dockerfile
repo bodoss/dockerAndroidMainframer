@@ -1,14 +1,11 @@
 # docker build --rm --tag myand .
 # docker run --restart always -m 6096m -p 3333:22 -v ~/Documents/gradcache:/root/.gradle --rm -d --name man myand
 # docker run -p 3333:22 -v ~/Documents/gradcache:/root/.gradle -v ~/keys/authorized_keys:/root/.ssh/authorized_keys -v ~/.android/debug.keystore:/root/.android/debug.keystore --rm -d --name man myand
+# docker run --restart always -p 3333:22 -v ~/Documents/gradcache:/root/.gradle -v ~/keys/authorized_keys:/root/.ssh/authorized_keys -v ~/.android/debug.keystore:/root/.android/debug.keystore -d --name man bodos/android_mainframer
 # copy your ssh pub key to this folder id_rsa_personal.pub
 
 FROM debian:stretch
-
 MAINTAINER Bohdan Trofymchuk "bohdan.trofymchuk@gmail.com"
-
-ENV VERSION_BUILD_TOOLS "29.0.2"
-ENV VERSION_TARGET_SDK "29"
 
 # Install Deps
 RUN apt-get --quiet update --yes
@@ -21,6 +18,9 @@ RUN cd /opt && \
     unzip android-sdk.zip -d android-sdk-linux && \
     rm -f android-sdk.zip && chown -R root.root android-sdk-linux
 
+
+ENV VERSION_BUILD_TOOLS "30.0.2"
+ENV VERSION_TARGET_SDK "30"
 # Setup environment
 ENV ANDROID_HOME /opt/android-sdk-linux
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
@@ -37,16 +37,15 @@ RUN (while [ 1 ]; do sleep 5; echo y; done) | ${ANDROID_HOME}/tools/bin/sdkmanag
   "platform-tools" \
   "platforms;android-${VERSION_TARGET_SDK}" \
   "platforms;android-28" \
-  "platforms;android-27" \
-  "platforms;android-26" \
+  "platforms;android-29" \
   "build-tools;${VERSION_BUILD_TOOLS}" \
   "extras;google;m2repository" "extras;google;google_play_services" "patcher;v4" --verbose
 
 #install gradle
 RUN cd /opt \
-	&& wget --quiet --output-document=gradle.zip https://services.gradle.org/distributions/gradle-6.1.1-all.zip \
-	&& unzip -q gradle.zip && rm -f gradle.zip && chown -R root.root /opt/gradle-6.1.1/bin
-ENV PATH ${PATH}:/opt/gradle-6.1.1/bin
+	&& wget --quiet --output-document=gradle.zip https://services.gradle.org/distributions/gradle-6.8-all.zip \
+	&& unzip -q gradle.zip && rm -f gradle.zip && chown -R root.root /opt/gradle-6.8/bin
+ENV PATH ${PATH}:/opt/gradle-6.8/bin
 ENV HOME /root
 
 # GO to workspace
